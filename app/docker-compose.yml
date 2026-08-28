@@ -1,6 +1,6 @@
 # k8s에 올리기 전, 이미지가 로컬에서 제대로 뜨는지 빠르게 확인하기 위한 용도.
-# ArgoCD/k8s 배포 흐름과는 별개이며, k8s/deployment.yaml의 image 태그와
-# 이 파일의 image 태그가 자동으로 동기화되지는 않으니 필요할 때 직접 맞춰줄 것.
+# CI(.github/workflows/build-and-bump.yml)가 빌드/푸시하는 GHCR 이미지와는
+# 완전히 별개 경로이며, 서로 자동 동기화되지 않으니 필요할 때 직접 맞춰줄 것.
 services:
   app:
     build: .                     # ./app 디렉토리(Dockerfile 위치) 기준으로 빌드

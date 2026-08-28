@@ -1,0 +1,60 @@
+# app/ 소스가 master에 push되면 자동으로:
+#   1) 이미지를 빌드해서 GHCR(ghcr.io)에 push
+#   2) k8s/deployment.yaml의 image 태그를 새로 빌드한 태그로 바꿔서 다시 커밋/push
+# 이 두 번째 커밋을 ArgoCD가 감지해서 실제 배포까지 이어진다.
+#
+# paths: ['app/**'] 로 트리거를 제한한 이유: 이 워크플로 자신이 만드는
+# k8s/deployment.yaml 커밋이 다시 워크플로를 트리거하는 무한루프를 막기 위함
+# (k8s/ 는 이 필터에 포함되지 않으므로 재트리거되지 않는다).
+name: build-and-bump
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - "app/**"
+
+# 매니페스트 커밋(contents)과 GHCR push(packages) 둘 다 쓰기 권한 필요
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  build-and-bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build and push image to GHCR
+        env:
+          REGISTRY: ghcr.io
+          IMAGE_NAME: ${{ github.repository_owner }}/argocd-lab-app
+        run: |
+          set -e
+          TAG="${GITHUB_SHA:0:7}"
+          IMAGE="$REGISTRY/$IMAGE_NAME:$TAG"
+
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login "$REGISTRY" -u "${{ github.actor }}" --password-stdin
+          docker build -t "$IMAGE" ./app
+          docker push "$IMAGE"
+
+          echo "IMAGE=$IMAGE" >> "$GITHUB_ENV"
+
+      - name: Bump image tag in k8s/deployment.yaml
+        run: |
+          set -e
+          sed -i "s#image: ghcr\.io/[^ ]*argocd-lab-app:.*#image: ${IMAGE}#" k8s/deployment.yaml
+          cat k8s/deployment.yaml
+
+      - name: Commit and push manifest change
+        run: |
+          set -e
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add k8s/deployment.yaml
+          if git diff --cached --quiet; then
+            echo "no manifest change, skipping commit"
+            exit 0
+          fi
+          git commit -m "ci: bump image to ${IMAGE}"
+          git push
