@@ -9,6 +9,10 @@ metadata:
     app: argocd-lab-app
 spec:
   replicas: 2 # 동시에 띄울 파드 개수
+  # 롤아웃 때마다 남는 옛 ReplicaSet 보관 개수 (기본값 10 -> 3으로 축소).
+  # 우리는 push할 때마다 태그가 바뀌어 롤아웃이 잦으니, 안 쓰는 ReplicaSet이
+  # 계속 쌓이는 걸 막고 최근 몇 개만 롤백용으로 남긴다.
+  revisionHistoryLimit: 3
   selector:
     matchLabels:
       app: argocd-lab-app
@@ -27,3 +31,4 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
+
