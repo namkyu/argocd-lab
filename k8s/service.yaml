@@ -8,8 +8,9 @@ spec:
   selector:
     app: argocd-lab-app        # 이 라벨을 가진 파드로 트래픽 전달
   ports:
-    - port: 80                 # 서비스 자체 포트
-      targetPort: 80           # 파드(컨테이너) 쪽 포트
-  # 클러스터 내부에서만 접근 가능. 외부 확인은
-  # kubectl port-forward svc/argocd-lab-app <local-port>:80 으로 함
-  type: ClusterIP
+    - port: 8082                # 서비스 자체 포트 (localhost:8082 로 접속)
+      targetPort: 80             # 파드(컨테이너) 쪽 포트
+  # Rancher Desktop의 k3s는 LoadBalancer 타입을 klipper(ServiceLB)로 지원해서
+  # 별도 kubectl port-forward 없이도 http://localhost:8082 로 바로 접근 가능.
+  # (port-forward는 특정 파드에 연결이 고정돼서 롤아웃마다 끊기는 문제가 있었음)
+  type: LoadBalancer
