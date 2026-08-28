@@ -1,3 +1,6 @@
+# ArgoCD가 감시하는 경로(k8s/)에 포함된 매니페스트.
+# 이 파일의 내용이 GitHub master 브랜치에서 바뀌면 ArgoCD가 감지해서
+# 여기 적힌 상태(replica 수, 이미지 태그 등)로 클러스터를 맞춘다(sync).
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -5,7 +8,7 @@ metadata:
   labels:
     app: argocd-lab-app
 spec:
-  replicas: 2
+  replicas: 2 # 동시에 띄울 파드 개수
   selector:
     matchLabels:
       app: argocd-lab-app
@@ -16,7 +19,12 @@ spec:
     spec:
       containers:
         - name: app
+          # 로컬에서 docker build로 만든 이미지 태그.
+          # 이 태그를 바꾸고 push해야 ArgoCD가 "변경"으로 인식해 재배포한다.
+          # (index.html만 바꾸고 이 태그를 그대로 두면 git diff가 없어 배포되지 않음)
           image: argocd-lab-app:v2
+          # Rancher Desktop이 dockerd(moby) 엔진이라 로컬 빌드 이미지를
+          # 별도 레지스트리 없이 그대로 쓸 수 있음 -> 항상 로컬 이미지를 우선 사용
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80

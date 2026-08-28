@@ -1,17 +1,22 @@
+<!-- ArgoCD Lab에서 배포 확인용으로 쓰는 샘플 정적 페이지. -->
+<!-- 화면에 보이는 버전 숫자(v1, v2 ...)를 바꿔서 커밋/푸시하면, -->
+<!-- ArgoCD가 이 변경을 감지해 재배포하는 과정을 눈으로 확인할 수 있다. -->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
   <title>ArgoCD Lab</title>
   <style>
+    /* 어두운 배경에 카드를 화면 중앙에 배치하는 최소한의 스타일 */
     body { font-family: -apple-system, sans-serif; background: #1e293b; color: #f1f5f9; display: flex; height: 100vh; align-items: center; justify-content: center; }
     .card { text-align: center; padding: 2rem 3rem; border-radius: 12px; background: #0f172a; border: 1px solid #334155; }
-    .version { font-size: 3rem; font-weight: 700; color: #38bdf8; }
+    .version { font-size: 3rem; font-weight: 700; color: #38bdf8; } /* 배포 확인용 버전 표시 */
   </style>
 </head>
 <body>
   <div class="card">
     <p>ArgoCD Lab App</p>
+    <!-- 이 숫자를 바꾸면 화면상으로 "새 버전이 배포됐는지" 바로 알 수 있다 -->
     <div class="version">v2</div>
   </div>
 </body>

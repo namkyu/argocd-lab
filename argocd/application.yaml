@@ -1,3 +1,6 @@
+# ArgoCD에게 "이 GitHub 저장소의 k8s/ 경로를 master 브랜치 기준으로
+# 계속 감시하고, 내용이 바뀌면 자동으로 클러스터에 반영해라"라고 알려주는
+# ArgoCD 자체의 리소스(Application CR). argocd 네임스페이스에 apply해서 등록한다.
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -7,14 +10,14 @@ spec:
   project: default
   source:
     repoURL: https://github.com/namkyu/argocd-lab.git
-    targetRevision: master
-    path: k8s
+    targetRevision: master   # 감시할 브랜치
+    path: k8s                # 이 경로 안의 매니페스트만 감시/배포 대상
   destination:
-    server: https://kubernetes.default.svc
-    namespace: default
+    server: https://kubernetes.default.svc  # 배포 대상 클러스터 (여기선 같은 클러스터)
+    namespace: default                      # 배포될 네임스페이스
   syncPolicy:
     automated:
-      prune: true
-      selfHeal: true
+      prune: true      # git에서 삭제된 리소스는 클러스터에서도 자동 삭제
+      selfHeal: true    # 클러스터를 수동으로 건드려도(kubectl edit 등) git 상태로 되돌림
     syncOptions:
-      - CreateNamespace=true
+      - CreateNamespace=true  # destination.namespace가 없으면 자동 생성
