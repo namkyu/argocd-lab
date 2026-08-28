@@ -1,9 +1,0 @@
-# k8s에 올리기 전, 이미지가 로컬에서 제대로 뜨는지 빠르게 확인하기 위한 용도.
-# CI(.github/workflows/build-and-bump.yml)가 빌드/푸시하는 GHCR 이미지와는
-# 완전히 별개 경로이며, 서로 자동 동기화되지 않으니 필요할 때 직접 맞춰줄 것.
-services:
-  app:
-    build: .                     # ./app 디렉토리(Dockerfile 위치) 기준으로 빌드
-    image: argocd-lab-app:v1     # 로컬 테스트용 태그. 최신 버전으로 확인하려면 값을 직접 바꾸고 재빌드
-    ports:
-      - "8081:80"                # http://localhost:8081 로 접속해 확인
