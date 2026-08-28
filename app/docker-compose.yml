@@ -1,0 +1,6 @@
+services:
+  app:
+    build: .
+    image: argocd-lab-app:v1
+    ports:
+      - "8081:80"

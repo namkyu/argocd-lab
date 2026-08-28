@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: argocd-lab-app
+  labels:
+    app: argocd-lab-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: argocd-lab-app
+  template:
+    metadata:
+      labels:
+        app: argocd-lab-app
+    spec:
+      containers:
+        - name: app
+          image: argocd-lab-app:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
