@@ -22,7 +22,7 @@ spec:
           # GitHub Actions(.github/workflows/build-and-bump.yml)가 app/ 변경을
           # 감지해서 이미지를 빌드/푸시하고, 이 줄의 태그를 자동으로 갱신해 커밋한다.
           # 사람이 직접 태그를 바꿀 필요 없음 - init은 워크플로 최초 실행 전 placeholder.
-          image: ghcr.io/namkyu/argocd-lab-app:init
+          image: ghcr.io/namkyu/argocd-lab-app:026f89e
           # 커밋마다 고유한 태그(git short SHA)를 쓰므로 캐시 문제 없이 IfNotPresent로 충분
           imagePullPolicy: IfNotPresent
           ports:
