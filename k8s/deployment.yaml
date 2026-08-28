@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: argocd-lab-app:v1
+          image: argocd-lab-app:v2
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
